@@ -1,0 +1,68 @@
+#include <Servo.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+ 
+LiquidCrystal_I2C lcd(0x27,16,2); // most I2C LCDs use address 0x27
+ 
+Servo barrierServo;
+ 
+int triggerPin = A1;
+int echoPin = A2;
+int potPin = A3;
+ 
+long duration;
+int distance;
+int setRange;
+ 
+void setup()
+{
+pinMode(triggerPin, OUTPUT);
+pinMode(echoPin, INPUT);
+ 
+barrierServo.attach(4);
+ 
+lcd.init();
+lcd.backlight();
+}
+ 
+void loop()
+{
+// Read potentiometer to set detection range
+setRange = analogRead(potPin) / 10;
+ 
+// Trigger ultrasonic pulse
+digitalWrite(triggerPin, LOW);
+delayMicroseconds(2);
+ 
+digitalWrite(triggerPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(triggerPin, LOW);
+ 
+// Read echo
+duration = pulseIn(echoPin, HIGH);
+ 
+// Convert to cm
+distance = duration * 0.01723;
+ 
+// Display values
+lcd.setCursor(0,0);
+lcd.print("Set:");
+lcd.print(setRange);
+lcd.print("cm ");
+ 
+lcd.setCursor(0,1);
+lcd.print("Dist:");
+lcd.print(distance);
+lcd.print("cm ");
+ 
+// Barrier control
+if(distance < setRange){
+barrierServo.write(00); // open barrier
+delay(5000);
+}
+else {
+barrierServo.write(90); // closed barrier
+}
+ 
+delay(500);
+}
