@@ -1,0 +1,39 @@
+// C++ code
+//
+#include <Adafruit_LiquidCrystal.h>
+ 
+int Input = 0;
+ 
+int Light = 0;
+ 
+Adafruit_LiquidCrystal lcd_1(0);
+ 
+void setup()
+{
+  lcd_1.begin(16, 2);
+  pinMode(A0, INPUT);
+  pinMode(A4, INPUT);
+  pinMode(0, OUTPUT);
+ 
+  lcd_1.setBacklight(1);
+  lcd_1.setCursor(0, 0);
+  lcd_1.print("Light Level:");
+  lcd_1.setCursor(0, 1);
+  lcd_1.print("Trigger at:");
+}
+ 
+void loop()
+{
+  Input = constrain(analogRead(A0), 0, 1023); // Map Sensitivity Input
+  lcd_1.setCursor(12, 0);
+  lcd_1.print(Light);
+  Light = constrain(analogRead(A4), 0, 1023); // Map Light Input
+  if (Light <= Input) {
+    digitalWrite(0, HIGH);
+  } else {
+    digitalWrite(0, LOW);
+  }
+  lcd_1.setCursor(12, 1);
+  lcd_1.print(Input);
+  delay(50); // Wait for 50 millisecond(s)
+}
