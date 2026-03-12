@@ -1,0 +1,26 @@
+// C++ code
+//
+#include <Adafruit_LiquidCrystal.h>
+ 
+int Speed = 0;
+ 
+int potentiometer = 0;
+ 
+Adafruit_LiquidCrystal lcd_1(0);
+ 
+void setup()
+{
+  lcd_1.begin(16, 2);
+  pinMode(A1, INPUT);
+  pinMode(3, OUTPUT);
+}
+ 
+void loop()
+{
+  potentiometer = analogRead(A1);
+  Speed = map(potentiometer, 0, 1023, 0, 100);
+  analogWrite(3, Speed);
+  lcd_1.print(Speed);
+  delay(1000); // Wait for 1000 millisecond(s)
+  lcd_1.clear();
+}
